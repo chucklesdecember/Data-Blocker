@@ -285,7 +285,7 @@ const handleThirdPartyCheck = async (e) => {
   setThirdPartyChecked(checked);
 
   // Track the checkbox event
-  await fetch('http://localhost:4000/api/analytics', {
+  await fetch('https://data-blocker.onrender.com/api/analytics', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify({
@@ -312,7 +312,7 @@ const handleThirdPartyCheck = async (e) => {
       { metric: 'attention_trap', value: TERMS_TEXT.includes('[Hidden Clause') ? 'present' : 'absent' }
     ];
     for (const m of metrics) {
-      await fetch('http://localhost:4000/api/analytics', {
+      await fetch('https://data-blocker.onrender.com/api/analytics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(m)
