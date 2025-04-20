@@ -5,29 +5,25 @@ import sqlite3 from 'sqlite3';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import ExcelJS from 'exceljs';
+import { DateTime } from 'luxon';
 
 const app = express();
 const PORT = 4000;
 const JWT_SECRET = 'supersecretkey';
 
 app.use(cors({
-  origin: 'https://data-blocker-git-main-cns-projects-f487bd3e.vercel.app',
+  origin: '[https://data-blocker-git-main-cns-projects-f487bd3e.vercel.app](https://data-blocker-git-main-cns-projects-f487bd3e.vercel.app)',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.options('*', cors());
-
 app.use(express.json());
 
 // SQLite setup
 const db = new sqlite3.Database('./data-blocker.db');
 
 // Create tables if not exist
-// users: id, username, password_hash, is_admin
-// analytics: id, user_id, metric, value, timestamp
-// quiz_results: id, user_id, question, correct, timestamp
-
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -68,8 +64,7 @@ app.post('/api/register', (req, res) => {
 // Login endpoint
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
-  console.log('Login attempt:', username, password); // Add this line
-
+  console.log('Login attempt:', username, password);
 
   // Special admin login hardcoded
   if (username === 'cnovember' && password === '[(Equinox123!)]') {
@@ -138,11 +133,23 @@ app.get('/api/admin/quiz', auth, (req, res) => {
 app.get('/api/admin/export', auth, async (req, res) => {
   if (!req.user.is_admin) return res.status(403).json({ error: 'Forbidden' });
 
-  db.all('SELECT * FROM analytics', [], async (err, analytics) => {
+  db.all(`
+    SELECT analytics.id, analytics.user_id, users.username, analytics.metric, analytics.value, analytics.timestamp
+    FROM analytics
+    LEFT JOIN users ON analytics.user_id = users.id
+  `, [], async (err, analytics) => {
     if (err) return res.status(500).json({ error: 'DB error' });
 
-    db.all('SELECT * FROM quiz_results', [], async (err2, quizResults) => {
+    console.log('Analytics export rows:', analytics);
+
+    db.all(`
+      SELECT quiz_results.id, quiz_results.user_id, users.username, quiz_results.question, quiz_results.selected, quiz_results.correct, quiz_results.timestamp
+      FROM quiz_results
+      LEFT JOIN users ON quiz_results.user_id = users.id
+    `, [], async (err2, quizResults) => {
       if (err2) return res.status(500).json({ error: 'DB error' });
+
+      console.log('QuizResults export rows:', quizResults);
 
       const workbook = new ExcelJS.Workbook();
 
@@ -151,17 +158,24 @@ app.get('/api/admin/export', auth, async (req, res) => {
       analyticsSheet.columns = [
         { header: 'ID', key: 'id' },
         { header: 'User ID', key: 'user_id' },
+        { header: 'Username', key: 'username' },
         { header: 'Metric', key: 'metric' },
         { header: 'Value', key: 'value' },
         { header: 'Timestamp', key: 'timestamp' }
       ];
-      analytics.forEach(row => analyticsSheet.addRow(row));
+      analytics.forEach(row => {
+        analyticsSheet.addRow({
+          ...row,
+          timestamp: DateTime.fromISO(row.timestamp, { zone: 'utc' }).setZone('America/New_York').toFormat('yyyy-MM-dd HH:mm:ss')
+        });
+      });
 
       // Quiz Results sheet
       const quizSheet = workbook.addWorksheet('Quiz Results');
       quizSheet.columns = [
         { header: 'ID', key: 'id' },
         { header: 'User ID', key: 'user_id' },
+        { header: 'Username', key: 'username' },
         { header: 'Question', key: 'question' },
         { header: 'Selected Answer', key: 'selected' },
         { header: 'Correct', key: 'correct' },
@@ -171,10 +185,11 @@ app.get('/api/admin/export', auth, async (req, res) => {
         quizSheet.addRow({
           id: row.id,
           user_id: row.user_id,
+          username: row.username,
           question: row.question,
           selected: row.selected,
           correct: row.correct ? 'Yes' : 'No',
-          timestamp: row.timestamp
+          timestamp: DateTime.fromISO(row.timestamp, { zone: 'utc' }).setZone('America/New_York').toFormat('yyyy-MM-dd HH:mm:ss')
         });
       });
 
