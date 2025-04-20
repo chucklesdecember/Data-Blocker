@@ -10,7 +10,10 @@ const app = express();
 const PORT = 4000;
 const JWT_SECRET = 'supersecretkey';
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://data-blocker-git-main-cns-projects-f487bd3e.vercel.app',
+  credentials: true
+}));
 app.use(express.json());
 
 // SQLite setup
