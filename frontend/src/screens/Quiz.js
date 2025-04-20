@@ -66,7 +66,8 @@ function Quiz({ token, onLogout }) {
       await fetch('https://data-blocker.onrender.com/api/quiz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ results })
+        body: JSON.stringify({ results }),
+        credentials: 'include'
       });
       setTimeout(() => navigate('/padlock'), 1200);
     }

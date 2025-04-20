@@ -8,13 +8,15 @@ function AdminPanel({ token, onLogout }) {
 
   useEffect(() => {
     fetch('https://data-blocker.onrender.com/api/admin/analytics', {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'include'
     })
       .then(res => res.json())
       .then(data => setAnalytics(data.analytics || []))
       .catch(() => setError('Could not fetch analytics'));
     fetch('https://data-blocker.onrender.com/api/admin/quiz', {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'include'
     })
       .then(res => res.json())
       .then(data => setQuiz(data.quiz || []))
@@ -24,7 +26,8 @@ function AdminPanel({ token, onLogout }) {
   const handleExport = async () => {
     setDownloading(true);
     const res = await fetch('https://data-blocker.onrender.com/api/admin/export', {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'include'
     });
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);

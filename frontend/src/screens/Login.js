@@ -15,7 +15,8 @@ function Login({ onLogin }) {
       const res = await fetch('https://data-blocker.onrender.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, is_admin: isAdmin })
+        body: JSON.stringify({ username, password, is_admin: isAdmin }),
+        credentials: 'include'
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Login failed');

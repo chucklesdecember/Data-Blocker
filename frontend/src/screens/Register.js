@@ -14,7 +14,8 @@ function Register({ onLogin }) {
       const res = await fetch('https://data-blocker.onrender.com/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password }),
+        credentials: 'include'
       });
       if (!res.ok) {
         const data = await res.json();

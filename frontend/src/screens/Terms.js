@@ -291,7 +291,8 @@ const handleThirdPartyCheck = async (e) => {
     body: JSON.stringify({
       metric: 'third_party_acknowledge',
       value: checked ? 'checked' : 'unchecked'
-    })
+    }),
+    credentials: 'include'
   });
 };
 
@@ -315,7 +316,8 @@ const handleThirdPartyCheck = async (e) => {
       await fetch('https://data-blocker.onrender.com/api/analytics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(m)
+        body: JSON.stringify(m),
+        credentials: 'include'
       });
     }
     navigate('/quiz');
