@@ -12,8 +12,12 @@ const JWT_SECRET = 'supersecretkey';
 
 app.use(cors({
   origin: 'https://data-blocker-git-main-cns-projects-f487bd3e.vercel.app',
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+app.options('*', cors());
+
 app.use(express.json());
 
 // SQLite setup
