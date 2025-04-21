@@ -8,16 +8,15 @@ import ExcelJS from 'exceljs';
 import { DateTime } from 'luxon';
 
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 const JWT_SECRET = 'supersecretkey';
 
 app.use(cors({
-  origin: '[https://data-blocker-git-main-cns-projects-f487bd3e.vercel.app](https://data-blocker-git-main-cns-projects-f487bd3e.vercel.app)',
+  origin: 'https://data-blocker-git-main-cns-projects-f487bd3e.vercel.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.options('*', cors());
 app.use(express.json());
 
 // SQLite setup
