@@ -46,11 +46,12 @@ function AdminPanel({ token, onLogout }) {
       <button onClick={handleExport} disabled={downloading}>
         {downloading ? 'Exporting...' : 'Export to Excel'}
       </button>
-      <table border="1" cellPadding="4" style={{ marginTop: 16, background: '#fff' }}>
-        <thead>
-          <tr>
-            <th>ID</th><th>User ID</th><th>Metric</th><th>Value</th><th>Timestamp</th>
-          </tr>
+      <div style={{ maxHeight: '40vh', overflow: 'auto', marginTop: 16, background: '#fff', border: '1px solid #ccc' }}>
+        <table border="1" cellPadding="4">
+          <thead>
+            <tr>
+              <th>ID</th><th>User ID</th><th>Metric</th><th>Value</th><th>Timestamp</th>
+            </tr>
         </thead>
         <tbody>
           {analytics.map(a => (
@@ -60,14 +61,16 @@ function AdminPanel({ token, onLogout }) {
           ))}
         </tbody>
       </table>
+      </div>
       <h3 style={{ marginTop: 32 }}>Quiz Results</h3>
-      <table border="1" cellPadding="4" style={{ background: '#fff' }}>
-        <thead>
-          <tr>
-            <th>ID</th><th>User ID</th><th>Question</th><th>Correct</th><th>Timestamp</th>
-          </tr>
-        </thead>
-        <tbody>
+      <div style={{ maxHeight: '40vh', overflow: 'auto', background: '#fff', border: '1px solid #ccc' }}>
+        <table border="1" cellPadding="4" style={{ width: '100%', background: '#fff' }}>
+          <thead>
+            <tr>
+              <th>ID</th><th>User ID</th><th>Question</th><th>Correct</th><th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
           {quiz.map(q => (
             <tr key={q.id}>
               <td>{q.id}</td><td>{q.user_id}</td><td>{q.question}</td><td>{q.correct ? 'Yes' : 'No'}</td><td>{q.timestamp}</td>
@@ -75,6 +78,7 @@ function AdminPanel({ token, onLogout }) {
           ))}
         </tbody>
       </table>
+      </div>
       {error && <div className="error">{error}</div>}
     </div>
   );
