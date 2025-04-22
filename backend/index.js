@@ -163,6 +163,7 @@ app.get('/api/admin/export', auth, async (req, res) => {
         { header: 'Timestamp', key: 'timestamp' }
       ];
       analytics.forEach(row => {
+        console.log('[EXPORT] Analytics row:', row);
         analyticsSheet.addRow({
           ...row,
           timestamp: DateTime.fromISO(row.timestamp, { zone: 'utc' }).setZone('America/New_York').toFormat('yyyy-MM-dd HH:mm:ss')
@@ -181,6 +182,7 @@ app.get('/api/admin/export', auth, async (req, res) => {
         { header: 'Timestamp', key: 'timestamp' }
       ];
       quizResults.forEach(row => {
+        console.log('[EXPORT] Quiz row:', row);
         quizSheet.addRow({
           id: row.id,
           user_id: row.user_id,
